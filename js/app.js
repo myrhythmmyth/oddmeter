@@ -139,6 +139,17 @@ const OddMeter = (() => {
     return 500; // 未知ラベルは後ろへ
   }
 
+  // 難易度が実際に付いているか（「なし」「空欄」「未知ラベル」は false）
+  // 実難易度: ☆=0.5, ★=1〜, 数値, DIFFICULTY_ORDER(1〜) → rank は 100 未満
+  function hasDifficulty(d) { return d.difficultyRank < 100; }
+
+  // 難易度ソート用: 難易度ありを前、なしを後ろに固定する比較（同区分は0）
+  function cmpHasDiff(a, b) {
+    const ah = hasDifficulty(a), bh = hasDifficulty(b);
+    if (ah === bh) return 0;
+    return ah ? -1 : 1;
+  }
+
   /* --------------------------------------------------------
    *  データ正規化
    * -------------------------------------------------------- */
@@ -375,8 +386,11 @@ const OddMeter = (() => {
     switch (state.sort) {
       case "title": list.sort((a, b) => a.title.localeCompare(b.title, "ja")); break;
       case "artist": list.sort((a, b) => (a.artist || "").localeCompare(b.artist || "", "ja")); break;
-      case "difficulty-asc": list.sort((a, b) => a.difficultyRank - b.difficultyRank); break;
-      case "difficulty-desc": list.sort((a, b) => b.difficultyRank - a.difficultyRank); break;
+      // 難易度ソート: 「なし」(難易度未設定)は方向に関わらず常に後ろ
+      case "difficulty-asc": list.sort((a, b) =>
+        cmpHasDiff(a, b) || (a.difficultyRank - b.difficultyRank)); break;
+      case "difficulty-desc": list.sort((a, b) =>
+        cmpHasDiff(a, b) || (b.difficultyRank - a.difficultyRank)); break;
     }
 
     state.filtered = list;
