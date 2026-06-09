@@ -1,0 +1,11 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+
+# ローカル開発用プレビュー設定（公開不要）
+.claude/
+
+# logs
+*.log

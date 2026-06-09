@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ODD METER — 変拍子楽曲データベース</title>
+  <meta name="description" content="変拍子（奇数拍子・複合拍子）の楽曲を集めたデータベース。検索・フィルタ・統計でお気に入りの一曲を探そう。" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css?v=8" />
+</head>
+<body>
+  <!-- 背景の動くオーブ -->
+  <div class="bg-orbs" aria-hidden="true">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+  </div>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <!-- ヘッダー -->
+  <header class="site-header glass">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="brand-text">
+        <h1>ODD&nbsp;METER</h1>
+        <p>変拍子楽曲データベース</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <span id="dataStatus" class="data-status" title="データの取得状況">
+        <span class="status-dot"></span><span class="status-label">読み込み中…</span>
+      </span>
+      <button id="themeToggle" class="icon-btn glass" title="ライト / ダーク切替" aria-label="テーマ切替">
+        <svg class="i-moon" viewBox="0 0 24 24" width="20" height="20"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ヒーロー -->
+    <section class="hero">
+      <div class="hero-copy">
+        <h2 class="hero-title">
+          <span class="line">5/4 も 7/8 も 11/8 も。</span>
+          <span class="line gradient-text">“ズレる”音楽だけを集めた。</span>
+        </h2>
+        <p class="hero-sub">
+          変拍子・奇数拍子・複合拍子の名曲を横断検索できるアーカイブ。
+          気になる拍子から、難易度から、お気に入りの一曲へ。
+        </p>
+      </div>
+      <!-- 統計ダッシュボード -->
+      <div class="stats-dash" id="statsDash">
+        <div class="stat-card glass">
+          <div class="stat-num" id="statTotal">—</div>
+          <div class="stat-label">登録曲数</div>
+        </div>
+        <div class="stat-card glass">
+          <div class="stat-num" id="statArtists">—</div>
+          <div class="stat-label">アーティスト</div>
+        </div>
+        <div class="stat-card glass">
+          <div class="stat-num" id="statMeters">—</div>
+          <div class="stat-label">拍子バリエーション</div>
+        </div>
+        <div class="stat-card glass wide">
+          <div class="mini-chart-head">
+            <span>拍子の分布</span>
+            <span class="mini-chart-hint" id="topMeterHint"></span>
+          </div>
+          <div class="bars" id="meterBars"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2カラムレイアウト: サイドバー + 本体 -->
+    <div class="layout">
+      <!-- アーティスト一覧サイドバー -->
+      <aside class="sidebar glass" id="sidebar">
+        <div class="sidebar-head">
+          <span class="sidebar-title">アーティスト</span>
+          <span class="sidebar-count"><span id="artistTotal">—</span> 組</span>
+        </div>
+        <div class="artist-search-wrap">
+          <input id="artistSearch" type="search" placeholder="アーティストを絞り込み…" autocomplete="off" />
+        </div>
+        <div class="artist-list" id="artistList"></div>
+      </aside>
+
+      <div class="content">
+        <!-- モバイル用サイドバー開閉 -->
+        <button class="sidebar-toggle glass" id="sidebarToggle">
+          <svg viewBox="0 0 24 24" width="16" height="16"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          アーティストで探す
+        </button>
+
+    <!-- コントロールバー -->
+    <section class="controls glass" id="controls">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="searchInput" type="search" placeholder="曲名・アーティスト・備考で検索…" autocomplete="off" />
+      </div>
+      <div class="control-group">
+        <div class="select-wrap">
+          <label for="sortSelect">並び替え</label>
+          <select id="sortSelect">
+            <option value="default">登録順</option>
+            <option value="title">曲名 A→Z</option>
+            <option value="artist">アーティスト A→Z</option>
+            <option value="difficulty-asc">難易度 低→高</option>
+            <option value="difficulty-desc">難易度 高→低</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- フィルタチップ -->
+    <section class="filters">
+      <div class="filter-row">
+        <span class="filter-label">拍子</span>
+        <div class="meter-mode" id="meterMode" title="複数選択時の条件">
+          <button class="mode-btn active" data-mode="or">いずれか</button>
+          <button class="mode-btn" data-mode="and">すべて含む</button>
+        </div>
+        <div class="chips" id="meterChips"></div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">難易度</span>
+        <div class="chips" id="difficultyChips"></div>
+      </div>
+    </section>
+
+    <!-- 結果カウント -->
+    <div class="result-bar">
+      <span id="resultCount" class="result-count"></span>
+      <button id="clearFilters" class="clear-btn" hidden>
+        <svg viewBox="0 0 24 24" width="14" height="14"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        条件をすべてクリア
+      </button>
+    </div>
+
+    <!-- カードグリッド -->
+    <section class="grid" id="cardGrid" aria-live="polite"></section>
+
+    <!-- 空状態 -->
+    <div class="empty-state" id="emptyState" hidden>
+      <div class="empty-emoji">🎼</div>
+      <p>条件に合う曲が見つかりませんでした。</p>
+      <button class="ghost-btn" onclick="OddMeter.clearAll()">条件をリセット</button>
+    </div>
+      </div><!-- /.content -->
+    </div><!-- /.layout -->
+  </main>
+
+  <footer class="site-footer">
+    <p>ODD METER — 変拍子の沼へようこそ。 <span id="footerMeta"></span></p>
+  </footer>
+
+  <!-- 詳細モーダル -->
+  <div class="modal-backdrop" id="modal" hidden>
+    <div class="modal glass" role="dialog" aria-modal="true">
+      <button class="modal-close icon-btn" id="modalClose" aria-label="閉じる">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="js/config.js?v=8"></script>
+  <script src="js/app.js?v=8"></script>
+</body>
+</html>
