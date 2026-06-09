@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=9" />
+  <link rel="stylesheet" href="css/styles.css?v=10" />
 </head>
 <body>
   <!-- 背景の動くオーブ -->
@@ -46,17 +46,19 @@
     <!-- 統計ダッシュボード -->
     <section class="hero">
       <div class="stats-dash" id="statsDash">
-        <div class="stat-card glass">
-          <div class="stat-num" id="statTotal">—</div>
-          <div class="stat-label">登録曲数</div>
-        </div>
-        <div class="stat-card glass">
-          <div class="stat-num" id="statArtists">—</div>
-          <div class="stat-label">アーティスト</div>
-        </div>
-        <div class="stat-card glass">
-          <div class="stat-num" id="statMeters">—</div>
-          <div class="stat-label">拍子バリエーション</div>
+        <div class="stats-col">
+          <div class="stat-card glass stat-row">
+            <span class="stat-label">登録曲数</span>
+            <span class="stat-num" id="statTotal">—</span>
+          </div>
+          <div class="stat-card glass stat-row">
+            <span class="stat-label">アーティスト</span>
+            <span class="stat-num" id="statArtists">—</span>
+          </div>
+          <div class="stat-card glass stat-row">
+            <span class="stat-label">拍子バリエーション</span>
+            <span class="stat-num" id="statMeters">—</span>
+          </div>
         </div>
         <div class="stat-card glass wide">
           <div class="mini-chart-head">
@@ -79,6 +81,10 @@
         <div class="artist-search-wrap">
           <input id="artistSearch" type="search" placeholder="アーティストを絞り込み…" autocomplete="off" />
         </div>
+        <div class="artist-sort" id="artistSort">
+          <button class="asort-btn active" data-sort="count">曲数順</button>
+          <button class="asort-btn" data-sort="name">名前順</button>
+        </div>
         <div class="artist-list" id="artistList"></div>
       </aside>
 
@@ -99,7 +105,6 @@
         <div class="select-wrap">
           <label for="sortSelect">並び替え</label>
           <select id="sortSelect">
-            <option value="default">登録順</option>
             <option value="title">曲名 A→Z</option>
             <option value="artist">アーティスト A→Z</option>
             <option value="difficulty-asc">難易度 低→高</option>
@@ -162,7 +167,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="js/config.js?v=9"></script>
-  <script src="js/app.js?v=9"></script>
+  <script src="js/config.js?v=10"></script>
+  <script src="js/app.js?v=10"></script>
 </body>
 </html>

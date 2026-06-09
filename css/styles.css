@@ -149,6 +149,10 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px)
 #artistSearch { width: 100%; padding: 9px 12px; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text); font-size: 0.82rem; outline: none; transition: border-color 0.2s, background 0.2s; }
 #artistSearch::placeholder { color: var(--text-faint); }
 #artistSearch:focus { border-color: var(--accent); background: rgba(124,92,255,0.08); }
+.artist-sort { display: flex; gap: 2px; padding: 3px; margin-bottom: 10px; border-radius: 999px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); }
+.asort-btn { flex: 1; font-size: 0.74rem; font-weight: 600; color: var(--text-dim); padding: 5px 0; border-radius: 999px; transition: all 0.18s var(--ease); }
+.asort-btn:hover { color: var(--text); }
+.asort-btn.active { background: var(--accent-grad); color: #fff; box-shadow: 0 2px 10px rgba(124,92,255,0.35); }
 .artist-list { overflow-y: auto; display: flex; flex-direction: column; gap: 2px; padding-right: 4px; scrollbar-width: thin; scrollbar-color: var(--glass-border) transparent; }
 .artist-list::-webkit-scrollbar { width: 6px; }
 .artist-list::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 999px; }
@@ -175,15 +179,23 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px)
 .hero-sub { margin-top: 18px; font-size: clamp(0.95rem, 1.6vw, 1.12rem); color: var(--text-dim); max-width: 600px; }
 
 /* ---------- 統計ダッシュボード ---------- */
+/* 左に3指標を縦積み、右に拍子の分布。3指標の合計高さが分布カードと揃う */
 .stats-dash {
   margin-top: 0;
   display: grid; gap: 16px;
-  grid-template-columns: repeat(3, 1fr) 1.8fr;
+  grid-template-columns: minmax(260px, 1fr) 1.7fr;
+  align-items: stretch;
 }
-.stat-card { border-radius: var(--radius); padding: 20px 22px; }
-.stat-num { font-family: "Outfit", sans-serif; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 900; line-height: 1; background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-.stat-label { margin-top: 8px; font-size: 0.78rem; color: var(--text-dim); letter-spacing: 0.02em; }
-.stat-card.wide { grid-row: span 1; }
+.stats-col { display: grid; grid-template-rows: repeat(3, 1fr); gap: 16px; }
+.stat-card { border-radius: var(--radius); padding: 18px 22px; }
+/* 指標カード: ラベルと数字を横並び。ラベル列を固定幅にして数字の頭を全カードで揃える */
+.stat-row { display: grid; grid-template-columns: 8.6em 1fr; align-items: center; gap: 10px; }
+.stat-label { font-size: 0.82rem; color: var(--text-dim); letter-spacing: 0.02em; white-space: nowrap; }
+.stat-num {
+  font-family: "Outfit", sans-serif; font-size: clamp(1.5rem, 2.4vw, 2.1rem); font-weight: 900;
+  line-height: 1; justify-self: start; font-variant-numeric: tabular-nums;
+  background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
 .mini-chart-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.78rem; color: var(--text-dim); margin-bottom: 12px; }
 .mini-chart-hint { font-size: 0.7rem; color: var(--accent-2); font-weight: 600; }
 
@@ -371,8 +383,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px)
 
 /* ---------- レスポンシブ ---------- */
 @media (max-width: 860px) {
-  .stats-dash { grid-template-columns: repeat(2, 1fr); }
-  .stat-card.wide { grid-column: span 2; }
+  .stats-dash { grid-template-columns: 1fr; }
   .controls { position: static; }
   .site-header { position: static; }
   /* サイドバーは1カラム化＆折りたたみ */
@@ -383,8 +394,6 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px)
   .sidebar .artist-list { max-height: 320px; }
 }
 @media (max-width: 520px) {
-  .stats-dash { grid-template-columns: 1fr 1fr; }
-  .stat-card.wide { grid-column: span 2; }
   .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
   .brand-text h1 { font-size: 1.05rem; }
   .data-status .status-label { display: none; }

@@ -9,12 +9,13 @@ const OddMeter = (() => {
     raw: [],          // 正規化済み全データ
     filtered: [],     // 表示中データ
     search: "",
-    sort: "default",
+    sort: "title",   // 既定は曲名順（「登録順」は廃止）
     activeMeters: new Set(),
     meterMode: "or", // "or" = いずれか含む / "and" = すべて含む
     activeDifficulties: new Set(),
     activeArtist: null,   // サイドバーで選択中のアーティスト
     artistQuery: "",      // サイドバー内の絞り込みテキスト
+    artistSort: "count",  // "count" = 曲数順 / "name" = 名前順
   };
 
   const $ = (sel) => document.querySelector(sel);
@@ -301,11 +302,18 @@ const OddMeter = (() => {
   function getArtistCounts() {
     const map = new Map();
     state.raw.forEach((d) => {
-      const a = d.artist || "(不明)";
+      const a = d.artist;
+      if (!a) return;           // アーティスト名が空白の曲はカウントしない
       map.set(a, (map.get(a) || 0) + 1);
     });
-    // 曲数が多い順 → 同数なら名前順
-    return [...map.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "ja"));
+    const entries = [...map.entries()];
+    // 並び替え: 曲数順（同数は名前順）/ 名前順
+    if (state.artistSort === "name") {
+      entries.sort((a, b) => a[0].localeCompare(b[0], "ja"));
+    } else {
+      entries.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "ja"));
+    }
+    return entries;
   }
 
   function renderArtists() {
@@ -558,6 +566,19 @@ const OddMeter = (() => {
         at = setTimeout(() => { state.artistQuery = e.target.value.trim(); renderArtists(); }, 100);
       });
     }
+    // アーティスト一覧の並び替え（曲数順 / 名前順）
+    const artistSort = $("#artistSort");
+    if (artistSort) {
+      artistSort.addEventListener("click", (e) => {
+        const btn = e.target.closest(".asort-btn");
+        if (!btn) return;
+        state.artistSort = btn.dataset.sort;
+        artistSort.querySelectorAll(".asort-btn").forEach((b) =>
+          b.classList.toggle("active", b === btn));
+        renderArtists();
+      });
+    }
+
     // モバイル: サイドバー開閉
     const sbToggle = $("#sidebarToggle");
     if (sbToggle) {
