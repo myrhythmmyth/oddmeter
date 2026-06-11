@@ -110,7 +110,7 @@ img { display: block; max-width: 100%; }
 .brand-text h1 { font-family: "Outfit", sans-serif; font-size: 1.3rem; font-weight: 900; letter-spacing: 0.04em; }
 .brand-text p { font-size: 0.72rem; color: var(--text-dim); letter-spacing: 0.02em; }
 
-.header-actions { display: flex; align-items: center; gap: 12px; }
+.header-actions { display: flex; align-items: center; gap: 10px; }
 .icon-btn {
   width: 42px; height: 42px; border-radius: 12px;
   display: grid; place-items: center; color: var(--text);
@@ -120,6 +120,22 @@ img { display: block; max-width: 100%; }
 .i-sun { display: none; }
 :root[data-theme="light"] .i-moon { display: none; }
 :root[data-theme="light"] .i-sun { display: block; }
+
+/* 投稿フォームCTA */
+.cta-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 0 18px; height: 42px; border-radius: 12px;
+  font-size: 0.88rem; font-weight: 700; color: #fff; text-decoration: none;
+  background: var(--accent-grad); box-shadow: 0 6px 18px rgba(124,92,255,0.4);
+  transition: transform 0.2s var(--ease), box-shadow 0.2s; white-space: nowrap;
+}
+.cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124,92,255,0.55); }
+.cta-btn svg { stroke: #fff; stroke-width: 2.5; }
+
+/* 表示切替アイコン: 次に切り替わる形を表示 */
+.i-grid { display: none; }
+:root[data-view="list"] .i-list { display: none; }
+:root[data-view="list"] .i-grid { display: block; }
 
 .data-status {
   display: flex; align-items: center; gap: 7px;
@@ -335,6 +351,27 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px)
 .tag.m-d32 { color: #fff; background: linear-gradient(120deg, #ff2d55, #b5179e); border-color: transparent; }   /* /32〜 激 */
 .tag-muted { opacity: 0.6; }
 
+/* ---------- リスト表示（サムネ｜曲名｜アーティスト｜拍子タグ） ---------- */
+:root[data-view="list"] .grid { grid-template-columns: 1fr; gap: 8px; }
+:root[data-view="list"] .card { flex-direction: row; align-items: stretch; }
+:root[data-view="list"] .card:hover { transform: none; }
+:root[data-view="list"] .card-thumb { flex: 0 0 auto; width: 124px; aspect-ratio: 16 / 9; }
+:root[data-view="list"] .card:hover .card-thumb img { transform: none; }
+:root[data-view="list"] .play-badge,
+:root[data-view="list"] .card-diff { display: none; }
+:root[data-view="list"] .card-body {
+  display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1.6fr) minmax(0, 2fr);
+  align-items: center; gap: 16px; padding: 10px 18px;
+}
+:root[data-view="list"] .card-title { -webkit-line-clamp: 1; font-size: 0.95rem; }
+:root[data-view="list"] .card-artist { margin-top: 0; }
+:root[data-view="list"] .card-tags { margin-top: 0; }
+/* 狭い画面では曲名・アーティスト・拍子を縦に積む */
+@media (max-width: 640px) {
+  :root[data-view="list"] .card-thumb { width: 96px; }
+  :root[data-view="list"] .card-body { grid-template-columns: 1fr; gap: 3px; padding: 8px 12px; }
+}
+
 /* ---------- 空状態 ---------- */
 .empty-state { text-align: center; padding: 80px 20px; color: var(--text-dim); }
 .empty-emoji { font-size: 3.5rem; margin-bottom: 16px; }
@@ -385,7 +422,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px)
 @media (max-width: 860px) {
   .stats-dash { grid-template-columns: 1fr; }
   .controls { position: static; }
-  .site-header { position: static; }
+  /* ヘッダーはスマホでも固定（position: sticky のまま維持） */
   /* サイドバーは1カラム化＆折りたたみ */
   .layout { grid-template-columns: 1fr; }
   .sidebar-toggle { display: inline-flex; }
@@ -393,10 +430,18 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px)
   .sidebar.open { display: flex; }
   .sidebar .artist-list { max-height: 320px; }
 }
+/* ヘッダーが手狭になる幅では投稿CTAをアイコンのみに */
+@media (max-width: 680px) {
+  .cta-label { display: none; }
+  .cta-btn { width: 42px; padding: 0; justify-content: center; }
+}
 @media (max-width: 520px) {
   .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-  .brand-text h1 { font-size: 1.05rem; }
-  .data-status .status-label { display: none; }
+  /* 固定ヘッダーを1行に収めるためロゴを省略しタイトルを小さめに */
+  .brand-mark { display: none; }
+  .brand-text h1 { font-size: 0.98rem; white-space: nowrap; }
+  .header-actions { gap: 8px; }
+  .site-header { padding: 12px 16px; }
 }
 
 /* ---------- アクセシビリティ ---------- */

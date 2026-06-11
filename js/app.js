@@ -551,6 +551,21 @@ const OddMeter = (() => {
   }
 
   /* --------------------------------------------------------
+   *  表示切替（グリッド / リスト）
+   * -------------------------------------------------------- */
+  function initView() {
+    const saved = localStorage.getItem("oddmeter-view") || "grid";
+    document.documentElement.dataset.view = saved;
+    const btn = $("#viewToggle");
+    if (!btn) return;
+    btn.onclick = () => {
+      const cur = document.documentElement.dataset.view === "list" ? "grid" : "list";
+      document.documentElement.dataset.view = cur;
+      localStorage.setItem("oddmeter-view", cur);
+    };
+  }
+
+  /* --------------------------------------------------------
    *  イベント結線
    * -------------------------------------------------------- */
   function bindEvents() {
@@ -617,6 +632,7 @@ const OddMeter = (() => {
    * -------------------------------------------------------- */
   async function init() {
     initTheme();
+    initView();
     bindEvents();
     state.raw = await loadData();
     renderStats();
