@@ -220,11 +220,30 @@ const OddMeter = (() => {
   /* --------------------------------------------------------
    *  統計の算出と描画
    * -------------------------------------------------------- */
+  // 数字を0からふわっとカウントアップ（reduced-motion時は即時表示）
+  function countUp(sel, target, dur = 900) {
+    const e = $(sel);
+    if (!e) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      e.textContent = target;
+      return;
+    }
+    const t0 = performance.now();
+    const ease = (x) => 1 - Math.pow(1 - x, 3);
+    (function frame(now) {
+      const p = Math.min((now - t0) / dur, 1);
+      e.textContent = Math.round(target * ease(p));
+      if (p < 1) requestAnimationFrame(frame);
+    })(t0);
+    // バックグラウンドタブ等でrAFが止まっても最終値は必ず表示する
+    setTimeout(() => { e.textContent = target; }, dur + 150);
+  }
+
   function renderStats() {
     const data = state.raw;
-    $("#statTotal").textContent = data.length;
+    countUp("#statTotal", data.length);
     const artists = new Set(data.map((d) => d.artist).filter(Boolean));
-    $("#statArtists").textContent = artists.size;
+    countUp("#statArtists", artists.size);
 
     // 拍子カウント
     const meterCount = {};
@@ -233,7 +252,7 @@ const OddMeter = (() => {
     const meterEntries = Object.entries(meterCount)
       .filter(([m]) => !exclude.includes(m))   // 4/4 など土台拍子を分布から除外
       .sort((a, b) => b[1] - a[1]);
-    $("#statMeters").textContent = meterEntries.length;
+    countUp("#statMeters", meterEntries.length);
 
     // ミニ棒グラフ（上位8つ）
     const barsWrap = $("#meterBars");
@@ -563,6 +582,13 @@ const OddMeter = (() => {
       const cur = document.documentElement.dataset.view === "list" ? "grid" : "list";
       document.documentElement.dataset.view = cur;
       localStorage.setItem("oddmeter-view", cur);
+      // 切替時にグリッドをふわっとフェードイン
+      const grid = $("#cardGrid");
+      if (grid) {
+        grid.classList.remove("view-fade");
+        void grid.offsetWidth; // アニメーション再トリガー
+        grid.classList.add("view-fade");
+      }
     };
   }
 
