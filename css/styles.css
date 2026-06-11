@@ -23,7 +23,7 @@
   --radius: 20px;
   --radius-sm: 13px;
   --blur: 18px;
-  --maxw: 1240px;
+  --maxw: 1760px; /* ワイド画面では本体も横幅をフル活用（グリッド列数が自動で増える） */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -351,7 +351,8 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px)
 .tag.m-d32 { color: #fff; background: linear-gradient(120deg, #ff2d55, #b5179e); border-color: transparent; }   /* /32〜 激 */
 .tag-muted { opacity: 0.6; }
 
-/* ---------- リスト表示（サムネ｜曲名｜アーティスト｜拍子タグ） ---------- */
+/* ---------- リスト表示（サムネ｜曲名｜アーティスト｜難易度｜拍子タグ） ---------- */
+.card-diff-inline { display: none; } /* グリッド表示ではサムネ上のバッジを使うため非表示 */
 :root[data-view="list"] .grid { grid-template-columns: 1fr; gap: 8px; }
 :root[data-view="list"] .card { flex-direction: row; align-items: stretch; }
 :root[data-view="list"] .card:hover { transform: none; }
@@ -360,16 +361,21 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px)
 :root[data-view="list"] .play-badge,
 :root[data-view="list"] .card-diff { display: none; }
 :root[data-view="list"] .card-body {
-  display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1.6fr) minmax(0, 2fr);
+  display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1.6fr) minmax(0, 0.9fr) minmax(0, 2fr);
   align-items: center; gap: 16px; padding: 10px 18px;
+}
+:root[data-view="list"] .card-diff-inline {
+  display: block; font-size: 0.8rem; color: var(--text-dim);
+  white-space: nowrap; letter-spacing: 0.06em;
 }
 :root[data-view="list"] .card-title { -webkit-line-clamp: 1; font-size: 0.95rem; }
 :root[data-view="list"] .card-artist { margin-top: 0; }
 :root[data-view="list"] .card-tags { margin-top: 0; }
-/* 狭い画面では曲名・アーティスト・拍子を縦に積む */
+/* 狭い画面では難易度カラムを畳み、曲名・アーティスト・拍子を縦に積む */
 @media (max-width: 640px) {
   :root[data-view="list"] .card-thumb { width: 96px; }
   :root[data-view="list"] .card-body { grid-template-columns: 1fr; gap: 3px; padding: 8px 12px; }
+  :root[data-view="list"] .card-diff-inline { display: none; }
 }
 
 /* ---------- 空状態 ---------- */
@@ -379,14 +385,23 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px)
 .ghost-btn:hover { background: var(--glass-bg-strong); transform: translateY(-2px); }
 
 /* ---------- フッター ---------- */
-.site-footer { text-align: center; padding: 44px 20px 60px; color: var(--text-faint); font-size: 0.82rem; }
+.site-footer {
+  text-align: center;
+  padding: 44px 20px calc(60px + env(safe-area-inset-bottom, 0px));
+  color: var(--text-faint); font-size: 0.82rem;
+}
 .credits { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 18px; }
-.credits-label { font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-faint); opacity: 0.65; }
-.credit-item { display: inline-flex; align-items: center; gap: 7px; color: var(--text-dim); text-decoration: none; font-size: 0.82rem; transition: color 0.2s; }
-.credit-item:hover { color: var(--text); }
-.credit-item .x-icon { width: 13px; height: 13px; fill: currentColor; stroke: none; opacity: 0.85; }
-.credit-handle { color: var(--text-faint); font-size: 0.74rem; margin-left: 5px; }
-.footer-meta { margin-top: 14px; font-size: 0.74rem; color: var(--text-faint); opacity: 0.6; }
+.credits-label { font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim); opacity: 0.8; }
+/* ダーク背景でも読める明るさに（サイズは小さいまま主張は控えめ） */
+.credit-item { display: inline-flex; align-items: center; gap: 7px; color: var(--text); opacity: 0.82; text-decoration: none; font-size: 0.82rem; transition: opacity 0.2s, color 0.2s; }
+.credit-item:hover { opacity: 1; }
+.credit-item .x-icon { width: 13px; height: 13px; fill: currentColor; stroke: none; opacity: 0.9; flex-shrink: 0; }
+.credit-handle { color: var(--text-dim); font-size: 0.74rem; margin-left: 5px; }
+/* スマホでは縦積み・Xアイコン基準で左端をきっちり揃える */
+@media (max-width: 640px) {
+  .credits { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .credits-label { align-self: flex-start; }
+}
 
 /* ---------- モーダル ---------- */
 /* hidden属性が付いている間は確実に非表示にする（display:grid の上書きを防ぐ） */

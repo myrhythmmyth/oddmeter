@@ -455,6 +455,7 @@ const OddMeter = (() => {
       <div class="card-body">
         <h3 class="card-title">${escapeHtml(d.title)}</h3>
         <p class="card-artist">${escapeHtml(d.artist || "Unknown Artist")}</p>
+        <span class="card-diff-inline">${d.difficulty && d.difficulty !== "なし" ? escapeHtml(d.difficulty) : ""}</span>
         <div class="card-tags">${meterTags || '<span class="tag tag-muted">拍子未分類</span>'}</div>
       </div>`;
 
@@ -639,7 +640,6 @@ const OddMeter = (() => {
     renderChips();
     renderArtists();
     applyFilters();
-    $("#footerMeta").textContent = `· ${state.raw.length}曲 収録`;
   }
 
   document.addEventListener("DOMContentLoaded", init);
