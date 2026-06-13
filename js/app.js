@@ -537,6 +537,24 @@ const OddMeter = (() => {
   }
 
   /* --------------------------------------------------------
+   *  フォーム選択ポップアップ
+   * -------------------------------------------------------- */
+  function openFormPopup() {
+    const p = $("#formPopup");
+    if (!p) return;
+    p.hidden = false;
+    requestAnimationFrame(() => p.classList.add("open"));
+    document.body.style.overflow = "hidden";
+  }
+  function closeFormPopup() {
+    const p = $("#formPopup");
+    if (!p) return;
+    p.classList.remove("open");
+    document.body.style.overflow = "";
+    setTimeout(() => { p.hidden = true; }, 250);
+  }
+
+  /* --------------------------------------------------------
    *  ユーティリティ
    * -------------------------------------------------------- */
   function escapeHtml(s) {
@@ -669,8 +687,21 @@ const OddMeter = (() => {
     $("#modalClose").addEventListener("click", closeModal);
     $("#modal").addEventListener("click", (e) => { if (e.target.id === "modal") closeModal(); });
 
+    // フォーム選択ポップアップ
+    const formBtn = $("#formBtn");
+    if (formBtn) formBtn.addEventListener("click", openFormPopup);
+    const formPopupClose = $("#formPopupClose");
+    if (formPopupClose) formPopupClose.addEventListener("click", closeFormPopup);
+    const formPopup = $("#formPopup");
+    if (formPopup) {
+      formPopup.addEventListener("click", (e) => { if (e.target.id === "formPopup") closeFormPopup(); });
+      // フォームを選んだら（別タブで開きつつ）ポップアップを閉じる
+      formPopup.querySelectorAll(".form-option").forEach((a) =>
+        a.addEventListener("click", () => closeFormPopup()));
+    }
+
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeModal();
+      if (e.key === "Escape") { closeModal(); closeFormPopup(); }
       if (e.key === "/" && document.activeElement.tagName !== "INPUT") {
         e.preventDefault();
         $("#searchInput").focus();
