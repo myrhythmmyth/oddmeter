@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=15" />
+  <link rel="stylesheet" href="css/styles.css?v=16" />
 </head>
 <body>
   <!-- 背景の動くオーブ -->
@@ -96,27 +96,28 @@
     <div class="layout">
       <!-- アーティスト一覧サイドバー -->
       <aside class="sidebar glass" id="sidebar">
-        <div class="sidebar-head">
-          <span class="sidebar-title">アーティスト</span>
-          <span class="sidebar-count"><span id="artistTotal">—</span> 組</span>
+        <!-- モバイルではこのボタンがトグル兼タイトル。押すと下にアーティスト一覧が展開 -->
+        <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-expanded="false" aria-controls="sidebarInner">
+          <svg viewBox="0 0 24 24" width="16" height="16"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          <span>アーティストで探す</span>
+        </button>
+        <div class="sidebar-inner" id="sidebarInner">
+          <div class="sidebar-head">
+            <span class="sidebar-title">アーティスト</span>
+            <span class="sidebar-count"><span id="artistTotal">—</span> 組</span>
+          </div>
+          <div class="artist-search-wrap">
+            <input id="artistSearch" type="search" placeholder="アーティストを絞り込み…" autocomplete="off" />
+          </div>
+          <div class="artist-sort" id="artistSort">
+            <button class="asort-btn active" data-sort="count">曲数順</button>
+            <button class="asort-btn" data-sort="name">名前順</button>
+          </div>
+          <div class="artist-list" id="artistList"></div>
         </div>
-        <div class="artist-search-wrap">
-          <input id="artistSearch" type="search" placeholder="アーティストを絞り込み…" autocomplete="off" />
-        </div>
-        <div class="artist-sort" id="artistSort">
-          <button class="asort-btn active" data-sort="count">曲数順</button>
-          <button class="asort-btn" data-sort="name">名前順</button>
-        </div>
-        <div class="artist-list" id="artistList"></div>
       </aside>
 
       <div class="content">
-        <!-- モバイル用サイドバー開閉 -->
-        <button class="sidebar-toggle glass" id="sidebarToggle">
-          <svg viewBox="0 0 24 24" width="16" height="16"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-          アーティストで探す
-        </button>
-
     <!-- コントロールバー -->
     <section class="controls glass" id="controls">
       <div class="search-wrap">
@@ -139,7 +140,9 @@
     <!-- フィルタチップ -->
     <section class="filters">
       <div class="filter-row">
-        <span class="filter-label">拍子</span>
+        <button class="filter-label" type="button" data-filter-toggle aria-expanded="false">
+          拍子<svg class="flt-caret" viewBox="0 0 24 24" width="14" height="14"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
         <div class="meter-mode" id="meterMode" title="複数選択時の条件">
           <button class="mode-btn active" data-mode="or">いずれか</button>
           <button class="mode-btn" data-mode="and">すべて含む</button>
@@ -147,7 +150,9 @@
         <div class="chips" id="meterChips"></div>
       </div>
       <div class="filter-row">
-        <span class="filter-label">難易度</span>
+        <button class="filter-label" type="button" data-filter-toggle aria-expanded="false">
+          難易度<svg class="flt-caret" viewBox="0 0 24 24" width="14" height="14"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
         <div class="chips" id="difficultyChips"></div>
       </div>
     </section>
@@ -199,7 +204,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="js/config.js?v=15"></script>
-  <script src="js/app.js?v=15"></script>
+  <script src="js/config.js?v=16"></script>
+  <script src="js/app.js?v=16"></script>
 </body>
 </html>

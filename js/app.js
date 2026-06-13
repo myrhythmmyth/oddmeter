@@ -375,6 +375,12 @@ const OddMeter = (() => {
     state.activeArtist = state.activeArtist === artist ? null : artist;
     renderArtists();
     applyFilters();
+    // スマホでは選択したら一覧を畳んで結果へ集中させる
+    if (window.matchMedia("(max-width: 860px)").matches && state.activeArtist) {
+      const sb = $("#sidebar"), sbToggle = $("#sidebarToggle");
+      if (sb) sb.classList.remove("open");
+      if (sbToggle) sbToggle.setAttribute("aria-expanded", "false");
+    }
     // グリッド先頭へスクロール
     const grid = $("#cardGrid");
     if (grid && state.activeArtist) grid.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -574,7 +580,9 @@ const OddMeter = (() => {
    *  表示切替（グリッド / リスト）
    * -------------------------------------------------------- */
   function initView() {
-    const saved = localStorage.getItem("oddmeter-view") || "grid";
+    // 既定はPCグリッド / スマホはリスト。ユーザーの明示選択(localStorage)があれば優先。
+    let saved = localStorage.getItem("oddmeter-view");
+    if (!saved) saved = window.matchMedia("(max-width: 640px)").matches ? "list" : "grid";
     document.documentElement.dataset.view = saved;
     const btn = $("#viewToggle");
     if (!btn) return;
@@ -635,11 +643,27 @@ const OddMeter = (() => {
       });
     }
 
-    // モバイル: サイドバー開閉
+    // モバイル: サイドバー開閉（トグル）
     const sbToggle = $("#sidebarToggle");
     if (sbToggle) {
-      sbToggle.addEventListener("click", () =>
-        document.querySelector("#sidebar").classList.toggle("open"));
+      sbToggle.addEventListener("click", () => {
+        const open = $("#sidebar").classList.toggle("open");
+        sbToggle.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+    }
+
+    // モバイル: 拍子・難易度フィルタの折りたたみ
+    document.querySelectorAll("[data-filter-toggle]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const row = btn.closest(".filter-row");
+        const open = row.classList.toggle("open");
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+    });
+    // PC幅では最初からフィルタを開いた状態に（折りたたみはスマホ用）
+    if (window.matchMedia("(min-width: 861px)").matches) {
+      document.querySelectorAll(".filter-row").forEach((r) => r.classList.add("open"));
+      document.querySelectorAll("[data-filter-toggle]").forEach((b) => b.setAttribute("aria-expanded", "true"));
     }
 
     $("#modalClose").addEventListener("click", closeModal);
