@@ -41,7 +41,7 @@
 
 /* ---------- リセット ---------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; background: var(--bg-0); }
+html { scroll-behavior: smooth; }
 body {
   font-family: "Inter", "Noto Sans JP", system-ui, sans-serif;
   background: var(--bg-0);
@@ -51,8 +51,6 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   transition: background 0.5s var(--ease), color 0.4s var(--ease);
-  /* 背景(固定オーブ)はノッチ/ホームバー域まで広げつつ、中身はセーフエリア内に収める */
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
 }
 svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
@@ -434,7 +432,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px)
 /* ---------- フッター ---------- */
 .site-footer {
   text-align: center;
-  padding: 44px 20px calc(60px + env(safe-area-inset-bottom, 0px));
+  padding: 44px 20px 60px;
   color: var(--text-faint); font-size: 0.82rem;
 }
 .credits { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 18px; }
