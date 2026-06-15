@@ -576,6 +576,15 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px)
 }
 
 /* ---------- アクセシビリティ ---------- */
+/* OSで「視差効果を減らす」設定の環境向け。
+   無限ループのアニメ(背景オーブ・ロゴ等)を1回で停止させ、点滅(チカチカ)を防ぐ。
+   animation-duration だけを潰すと無限ループが超高速で回り続け点滅するため
+   iteration-count: 1 を併用して確実に停止させる。 */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
